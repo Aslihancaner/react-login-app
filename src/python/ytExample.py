@@ -36,15 +36,14 @@ from passlib.hash import bcrypt
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "change-me-to-a-secure-random-value")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60  # ihtiyaç halinde değiştir
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    # Eğer DB'de hash yoksa (düz metin) bu fonksiyona fallback ekleyebilirsin,
-    # ama kesinlikle düz metin saklamamalısın.
+
     try:
         return bcrypt.verify(plain_password, hashed_password)
     except Exception:
-        # fallback: düz text karşılaştırma (tehlikeli — üretimde kullanma)
+#todo: bu ksım saglıklı değil sonra bak
         return plain_password == hashed_password
 
 def create_access_token(data: dict, expires_delta: int | None = None):
@@ -86,10 +85,16 @@ def get_db():
 
 @app.post("/login")
 def login(req: LoginRequest, db: Session = Depends(get_db)):
+    
     user = db.query(models.User).filter(models.User.username == req.username).first()
     if not user:
         raise HTTPException(status_code=401, detail="Kullanıcı bulunamadı veya hatalı şifre")
     if not auth.verify_password(req.password, user.password):
         raise HTTPException(status_code=401, detail="Kullanıcı bulunamadı veya hatalı şifre")
-    token = auth.create_access_token({"sub": user.username, "uid": user.id})
+    token = auth.create_access_token({
+    "sub": user.username,
+    "uid": user.id,
+    "role": user.user_role 
+})
+
     return {"access_token": token, "token_type": "bearer"}

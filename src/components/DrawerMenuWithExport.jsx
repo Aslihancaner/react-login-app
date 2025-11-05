@@ -18,6 +18,18 @@ export default function DrawerMenu() {
 
   const baseUrl = 'http://localhost:8080/api/users'
 
+  const token = localStorage.getItem("token");
+  let role = null;
+
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      role = decoded.role;
+    } catch (err) {
+      console.error("Token çözümlenemedi:", err);
+    }
+  }
+
   const handleListUsers = async () => {
     try {
       setLoading(true)
@@ -51,7 +63,6 @@ export default function DrawerMenu() {
     }
   }
 
-  // 🔹 EXCEL export
   const exportToExcel = () => {
     if (users.length === 0) return
     const worksheet = XLSX.utils.json_to_sheet(users)
@@ -60,7 +71,6 @@ export default function DrawerMenu() {
     XLSX.writeFile(workbook, 'kullanici_listesi.xlsx')
   }
 
-  // 🔹 PDF export
   const exportToPDF = () => {
     if (users.length === 0) return
     const doc = new jsPDF()
