@@ -84,6 +84,67 @@ export default function DrawerMenu() {
     doc.save('kullanici_listesi.pdf')
   }
 
+
+  /**
+   * import * as XLSX from 'xlsx'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
+
+const exportToExcel = () => {
+  if (users.length === 0) return
+
+  // label özelleştirme
+  const headers = ['ID', 'Kullanıcı Adı', 'Email']
+
+  // headera göre mapleme
+  const worksheetData = users.map(u => ({
+    ID: u.id,
+    'Kullanıcı Adı': u.username,
+    Email: u.email,
+  }))
+
+  const worksheet = XLSX.utils.json_to_sheet(worksheetData)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Kullanıcılar')
+
+  // Başlık satıırnı ilk siraya sabitledim
+  XLSX.utils.sheet_add_aoa(worksheet, [headers], { origin: 'A1' })
+
+  XLSX.writeFile(workbook, 'kullanici_listesi.xlsx')
+}
+
+const exportToPDF = () => {
+  if (users.length === 0) return
+
+//yatay mod
+  const doc = new jsPDF({ orientation: 'landscape' })
+
+  doc.text('Kullanıcı Listesi', 14, 15)
+
+  const tableData = users.map(u => [u.id, u.username, u.email])
+
+  doc.autoTable({
+    head: [['ID', 'Kullanıcı Adı', 'Email']],
+    body: tableData,
+    startY: 25,
+    styles: {
+      fontSize: 10,
+    },
+    headStyles: {
+      fillColor: [41, 128, 185], // mavi ton
+      textColor: [255, 255, 255],
+      halign: 'center',
+    },
+    bodyStyles: {
+      halign: 'center',
+    },
+  })
+
+  doc.save('kullanici_listesi.pdf')
+}
+
+   */
+
   return (
     <Box sx={{ display: 'flex', width: '100%' }}>
       {/* Sol Drawer */}
